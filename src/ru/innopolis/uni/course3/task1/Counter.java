@@ -1,24 +1,36 @@
 package ru.innopolis.uni.course3.task1;
 
+import java.math.BigInteger;
+
 /**
+ * Counter for numbers
  * Created by julia on 09.12.2016.
+ * @author Julia Savicheva
  */
 public class Counter {
-    private int count;
+    /**
+     * Current Counter value
+     */
+    private BigInteger count;
 
+    /**
+     * Counter class constructor
+     */
     public Counter() {
-        this.count = 0;
+        this.count = BigInteger.ZERO;
     }
 
-    public int getCount() {
-        return count;
+    /**
+     * @return current state of counter
+     */
+    public String getCount() {
+        return count.toString();
     }
 
-    /*public void setCount(int count) {
-        this.count = count;
-    }*/
-
-    public void incremnt(int inc) {
-        this.count += inc;
+    /**
+     * @param inc value that will be added to counter
+     */
+    public void increment(BigInteger inc) {
+        this.count = this.count.add(inc);
     }
 }
