@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 /**
  * Counter for numbers
- * Created by julia on 09.12.2016.
+ * Created on 09.12.2016.
  * @author Julia Savicheva
  */
 public class Counter {

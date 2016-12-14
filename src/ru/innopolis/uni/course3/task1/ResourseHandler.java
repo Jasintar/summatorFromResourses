@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * Class that handle resourse in thread
- * Created by julia on 09.12.2016.
+ * Created on 09.12.2016.
  * @author Julia Savicheva
  */
 public class ResourseHandler extends Thread implements Runnable {

@@ -1,7 +1,8 @@
 package ru.innopolis.uni.course3.task1;
 
 /**
- * Created by julia on 09.12.2016.
+ * Created on 09.12.2016.
+ * @authot Julia Savicheva
  */
 public class Main {
     private static Counter counter = new Counter();
