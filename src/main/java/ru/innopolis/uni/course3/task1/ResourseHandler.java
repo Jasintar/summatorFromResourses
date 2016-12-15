@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -15,13 +14,14 @@ import java.util.regex.Pattern;
  * Created on 09.12.2016.
  * @author Julia Savicheva
  */
-public class ResourseHandler extends Thread implements Runnable {
+public class ResourseHandler extends Thread {
     private static Logger logger = LoggerFactory.getLogger(ResourseHandler.class);
 
     private String resourseName;
     private final Counter counter;
 
-    private static String allowedSymbols = "0123456789- ";
+    private static String allowedSymbols = "0123456789- \n\t\r";
+    private static String separators = " \n\t\r";
 
     /**
      * ResourseHandler constructor
@@ -39,10 +39,10 @@ public class ResourseHandler extends Thread implements Runnable {
     @Override
     public void run() {
         System.out.println(resourseName);
-        parseFile();
+        readResource();
     }
 
-    private void parseFile() {
+    private void readResource() {
         BufferedReader bufferedReader = null;
         try {
             if (isUrl(resourseName)) {
@@ -87,15 +87,18 @@ public class ResourseHandler extends Thread implements Runnable {
         return m.matches();
     }
 
-    private void parseReader(BufferedReader reader) throws NumberFormatException, IOException {
+    private void parseReader(Reader reader) throws NumberFormatException, IOException {
         StringBuilder buffer = new StringBuilder();
         Integer number;
         int c;
 
         while (((c = reader.read()) != -1) && counter.correctProcessing) {
-            if (c == ' ') {
-                number = Integer.valueOf(buffer.toString());
+            if (separators.indexOf(c) != -1) {
+                if (buffer.length() == 0) {
+                    continue;
+                }
 
+                number = Integer.valueOf(buffer.toString());
 
                 if (isCorrectNumber(number)) {
                     synchronized (this.counter) {
@@ -113,8 +116,6 @@ public class ResourseHandler extends Thread implements Runnable {
                 counter.correctProcessing = false;
                 logger.warn("Incorrect symbol in resource {}: {}", resourseName, (char)c);
 //                System.out.println("incorrect symbol in file ".concat(resourseName).concat(": ") + (char)c);
-
-
             }
             buffer.append((char) c);
         }
