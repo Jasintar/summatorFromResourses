@@ -1,8 +1,12 @@
 package ru.innopolis.uni.course3.task1;
 
-import org.junit.*
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.math.BigInteger;
+
+import static org.junit.Assert.*;
 
 /**
  * Created on 15.12.2016.
@@ -12,16 +16,17 @@ import org.slf4j.LoggerFactory;
 public class CounterTest {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
 
-    private CounterTest counter;
+    private Counter counter;
 
     @Before
     public void initialize() {
-        this.counter = new CounterTest();
+        this.counter = new Counter();
     }
-
+//    @Ignore
     @Test
     public void incrementTest() {
-//        this.counter.increment(5);
-        Assert.assertTrue(counter.);
+        BigInteger six = new BigInteger("6");
+        counter.increment(new Integer(6));
+        assertTrue("incorrect increment", counter.getCount().equals(six));
     }
 }

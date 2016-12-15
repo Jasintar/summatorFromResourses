@@ -1,5 +1,8 @@
 package ru.innopolis.uni.course3.task1;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -13,15 +16,26 @@ import java.util.regex.Pattern;
  * @author Julia Savicheva
  */
 public class ResourseHandler extends Thread implements Runnable {
+    private static Logger logger = LoggerFactory.getLogger(ResourseHandler.class);
+
     private String resourseName;
     private final Counter counter;
 
+    private static String allowedSymbols = "0123456789- ";
 
-    public ResourseHandler(String resourseName, Counter counter) {
-        this.resourseName = resourseName;
+    /**
+     * ResourseHandler constructor
+     * @param resourceName name of file or URL
+     * @param counter new numbers adds to Counter
+     */
+    public ResourseHandler(String resourceName, Counter counter) {
+        this.resourseName = resourceName;
         this.counter = counter;
     }
 
+    /**
+     * Parse resourse, and adds numbers to counter
+     */
     @Override
     public void run() {
         System.out.println(resourseName);
@@ -29,42 +43,33 @@ public class ResourseHandler extends Thread implements Runnable {
     }
 
     private void parseFile() {
-        if (isUrl(resourseName)) {
-            try {
+        BufferedReader bufferedReader = null;
+        try {
+            if (isUrl(resourseName)) {
                 URL url = new URL(resourseName);
-                try (InputStreamReader fr = new InputStreamReader(url.openStream());
-                     BufferedReader br = new BufferedReader(fr)){
-                    parseReader(br);
-                } catch (FileNotFoundException e) {
-                    System.out.println(resourseName.concat(" file not found!"));
-                    e.printStackTrace();
+                bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+            } else if (isFilename(resourseName)) {
+                bufferedReader = new BufferedReader(new FileReader(resourseName));
+            }
+            parseReader(bufferedReader);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } catch (MalformedURLException e) {
-
-                e.printStackTrace();
             }
-        } else if (isFilename(resourseName)) {
-            try (FileReader fr = new FileReader(resourseName);
-                 BufferedReader br = new BufferedReader(fr)) {
-                parseReader(br);
-
-            } catch (FileNotFoundException e) {
-                System.out.println("file not found");
-                e.printStackTrace();
-            } catch (IOException e) {
-                System.out.println("ioexception");
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Cannot handle resourse ".concat(resourseName));
         }
     }
 
-    private boolean isCorrectNumber(BigInteger number) {
+    private boolean isCorrectNumber(Integer number) {
         boolean result = false;
-        if ((number.compareTo(BigInteger.ZERO) == 1) && (number.remainder(new BigInteger("2")).equals(BigInteger.ZERO))) {
+        if ((number > 0) && (number % 2 == 0)) {
             result = true;
         }
         return result;
@@ -82,25 +87,34 @@ public class ResourseHandler extends Thread implements Runnable {
         return m.matches();
     }
 
-    private void parseReader(BufferedReader reader) throws IOException{
+    private void parseReader(BufferedReader reader) throws NumberFormatException, IOException {
         StringBuilder buffer = new StringBuilder();
+        Integer number;
         int c;
 
-        while ((c = reader.read()) != -1) {
+        while (((c = reader.read()) != -1) && counter.correctProcessing) {
             if (c == ' ') {
-                BigInteger number = new BigInteger(buffer.toString());
+                number = Integer.valueOf(buffer.toString());
+
 
                 if (isCorrectNumber(number)) {
                     synchronized (this.counter) {
                         counter.increment(number);
-//                        System.out.print(resourseName +  ": ");
-                        System.out.println(counter.getCount());
+                        System.out.print(resourseName +  ": ");
+                        System.out.println(counter.getCount().toString());
 
                     }
                 }
                 buffer.setLength(0);
                 buffer.trimToSize();
                 continue;
+            }
+            if (allowedSymbols.indexOf(c) == -1) {
+                counter.correctProcessing = false;
+                logger.warn("Incorrect symbol in resource {}: {}", resourseName, (char)c);
+//                System.out.println("incorrect symbol in file ".concat(resourseName).concat(": ") + (char)c);
+
+
             }
             buffer.append((char) c);
         }

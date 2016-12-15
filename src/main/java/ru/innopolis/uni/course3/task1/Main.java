@@ -13,13 +13,12 @@ public class Main {
     private static Counter counter = new Counter();
 
     public static void main(String[] args) {
-        logger.warn("message");
+//        logger.warn("message");
 
-        for (String resourse: args) {
-            Thread t = new ResourseHandler(resourse, counter);
-            t.start();
-        }
-        logger.info("Message");
-        System.out.println(counter.getCount());
+
+        SummatorFromResources summator = new SummatorFromResources(args);
+        summator.sumAll();
+
+//        logger.info("Message");
     }
 }

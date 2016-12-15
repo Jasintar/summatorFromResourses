@@ -8,6 +8,7 @@ import org.junit.*;
  * @authot Julia Savicheva
  */
 public class SummatorFromResoursesTest {
+    @Ignore
     @Test
     public void whenAllOkThen() {
 //        boolean result = false;
