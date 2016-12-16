@@ -22,11 +22,17 @@ public class CounterTest {
     public void initialize() {
         this.counter = new Counter();
     }
-//    @Ignore
+
     @Test
-    public void incrementTest() {
+    public void incrementTestInteger() {
         BigInteger six = new BigInteger("6");
         counter.increment(new Integer(6));
+        assertTrue("incorrect increment", counter.getCount().equals(six));
+    }
+    @Test
+    public void incrementTestBiginteger() {
+        BigInteger six = new BigInteger("6");
+        counter.increment(new BigInteger("6"));
         assertTrue("incorrect increment", counter.getCount().equals(six));
     }
 }

@@ -14,13 +14,20 @@ public class SummatorFromResources {
     private static final Counter counter = new Counter();
     String[] resources;
 
+    /**
+     * Constructor of multy-thread Summator
+     * @param resources resources list
+     */
     public SummatorFromResources(String[] resources) {
         this.resources = resources;
     }
 
+    /**
+     * calculate all numbers, each resource calculates in own thread
+     */
     public void sumAll() {
         for (String resource: resources) {
-            Thread t = new ResourseHandler(resource, counter);
+            Thread t = new ResourceHandler(resource, counter);
             t.start();
         }
     }

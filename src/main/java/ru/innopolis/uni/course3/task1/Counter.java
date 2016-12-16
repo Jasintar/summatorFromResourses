@@ -48,7 +48,10 @@ public class Counter {
     public void increment(BigInteger inc) {
         this.count = this.count.add(inc);
     }
-
+    /**
+     * Adds inc to Counter
+     * @param inc value that will be added to counter
+     */
     public void increment(Integer inc) {
         this.count = this.count.add(BigInteger.valueOf(inc));
     }

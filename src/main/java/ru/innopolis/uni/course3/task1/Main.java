@@ -13,9 +13,7 @@ public class Main {
     private static Counter counter = new Counter();
 
     public static void main(String[] args) {
-//        logger.warn("русский текст");
         SummatorFromResources summator = new SummatorFromResources(args);
         summator.sumAll();
-//        logger.info("Message");
     }
 }

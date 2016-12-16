@@ -10,55 +10,50 @@ import java.io.Reader;
  */
 public class ParserNumbers {
     private Reader reader;
-    private Counter counter;
 
     private static String allowedSymbols = "0123456789- \n\t\r";
     private static String separators = " \n\t\r";
 
-    public ParserNumbers(Reader reader, Counter counter) {
-//        logger.info(allowedSymbols);
+    /**
+     * ParserNumbers constructor
+     * @param reader откуда будут читаться числа
+     */
+    public ParserNumbers(Reader reader) {
         this.reader = reader;
-        this.counter = counter;
     }
 
-    public void parse() throws NumberFormatException, IOException {
+    /**
+     * Returns next number from Reader
+     * @return next number
+     * @throws IOException if incorrect symbol found
+     * @throws NumberFormatException if number cannot be Integer
+     */
+    public Integer getNextNumber() throws IOException, NumberFormatException {
         StringBuilder buffer = new StringBuilder();
-        Integer number;
+        Integer number = null;
         int c;
 
-        while (((c = reader.read()) != -1) && counter.correctProcessing) {
+        while (((c = reader.read()) != -1)) {
             if (separators.indexOf(c) != -1) {
                 if (buffer.length() == 0) {
                     continue;
                 }
-                number = Integer.valueOf(buffer.toString());
-
-                if (isCorrectNumber(number)) {
-                    synchronized (this.counter) {
-                        counter.increment(number);
-//                        System.out.print(resourseName +  ": ");
-                        System.out.println(counter.getCount().toString());
-
-                    }
+                try {
+                    number = Integer.valueOf(buffer.toString());
+                } catch (NumberFormatException e) {
+                    throw new NumberFormatException("Incorrect number ".concat(buffer.toString()));
                 }
+
+
                 buffer.setLength(0);
                 buffer.trimToSize();
-                continue;
+                break;
             }
             if (allowedSymbols.indexOf(c) == -1) {
-                counter.correctProcessing = false;
-//                logger.warn("Incorrect symbol in resource {}: {}", resourseName, (char)c);
-//                System.out.println("incorrect symbol in file ".concat(resourseName).concat(": ") + (char)c);
+                throw new IOException("Incorrect symbol " + (char) c);
             }
             buffer.append((char) c);
         }
-    }
-
-    private boolean isCorrectNumber(Integer number) {
-        boolean result = false;
-        if ((number > 0) && (number % 2 == 0)) {
-            result = true;
-        }
-        return result;
+        return number;
     }
 }
