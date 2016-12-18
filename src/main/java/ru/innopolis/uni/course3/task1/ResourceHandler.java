@@ -49,16 +49,14 @@ public class ResourceHandler extends Thread {
     }
 
     private void parseResource() {
-        logger.info("Starts handling of resource {}", resourseName);
+        logger.info("Starts parsing of resource {}", resourseName);
         Integer number;
         try {
             while (counter.correctProcessing && (number = parser.getNextNumber()) != null) {
                 if (isCorrectNumber(number)) {
-                    synchronized (this.counter) {
-                        logger.info("Added number {} from resource {}", number, resourseName);
-                        counter.increment(number);
-                        logger.info("Current sum: {}", counter.getCount());
-                    }
+                    logger.info("Added number {} from resource {}", number, resourseName);
+                    counter.increment(number);
+                    logger.info("Current sum: {}", counter.getCount());
                 }
             }
         } catch (NumberFormatException e) {

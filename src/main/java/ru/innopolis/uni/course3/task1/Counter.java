@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Counter for numbers
@@ -27,11 +28,17 @@ public class Counter {
     static volatile boolean correctProcessing;
 
     /**
+     * locker object for synchronization
+     */
+    private ReentrantLock locker;
+
+    /**
      * Counter class constructor
      */
     public Counter() {
         this.count = BigInteger.ZERO;
         correctProcessing = true;
+        locker = new ReentrantLock();
     }
 
     /**
@@ -46,7 +53,16 @@ public class Counter {
      * @param inc value that will be added to counter
      */
     public void increment(BigInteger inc) {
-        this.count = this.count.add(inc);
+        while(true){
+            if(this.locker.tryLock()){
+                try{
+                    this.count = this.count.add(inc);
+                } finally{
+                    this.locker.unlock();
+                }
+                break;
+            }
+        }
     }
     /**
      * Adds inc to Counter
@@ -54,5 +70,9 @@ public class Counter {
      */
     public void increment(Integer inc) {
         this.count = this.count.add(BigInteger.valueOf(inc));
+    }
+
+    public ReentrantLock getLocker() {
+        return locker;
     }
 }

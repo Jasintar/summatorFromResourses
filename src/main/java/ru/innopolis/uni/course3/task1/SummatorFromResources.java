@@ -3,6 +3,9 @@ package ru.innopolis.uni.course3.task1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Created on 14.12.2016.
  *
@@ -26,9 +29,11 @@ public class SummatorFromResources {
      * calculate all numbers, each resource calculates in own thread
      */
     public void sumAll() {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
         for (String resource: resources) {
-            Thread t = new ResourceHandler(resource, counter);
-            t.start();
+            executor.submit(new ResourceHandler(resource, counter));
         }
+        executor.shutdown();
     }
 }
